@@ -25,6 +25,14 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
     )
     """,
     """
+    CREATE TABLE IF NOT EXISTS engine_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        started_at REAL NOT NULL,
+        stopped_at REAL NOT NULL,
+        duration_seconds REAL NOT NULL
+    )
+    """,
+    """
     CREATE TABLE IF NOT EXISTS gps_positions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         machine_id INTEGER NOT NULL,
@@ -38,6 +46,10 @@ SCHEMA_STATEMENTS: tuple[str, ...] = (
     """
     CREATE INDEX IF NOT EXISTS idx_engine_hours_machine_id
     ON engine_hours (machine_id)
+    """,
+    """
+    CREATE INDEX IF NOT EXISTS idx_engine_sessions_started_at
+    ON engine_sessions (started_at)
     """,
     """
     CREATE INDEX IF NOT EXISTS idx_gps_positions_machine_id_timestamp
