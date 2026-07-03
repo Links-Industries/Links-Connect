@@ -1,0 +1,8 @@
+[project]
+name = "links-connect"
+version = "0.1.0"
+description = "Industrial telematics platform developed by Links Industries."
+requires-python = ">=3.13"
+
+[project.scripts]
+links-agent = "apps.agent.main:main"
