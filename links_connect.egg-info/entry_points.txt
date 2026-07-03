@@ -1,0 +1,2 @@
+[console_scripts]
+links-agent = apps.agent.main:main
