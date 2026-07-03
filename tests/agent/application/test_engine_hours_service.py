@@ -31,3 +31,29 @@ def test_total_sessions_counts_loaded_sessions() -> None:
     service = EngineHoursService(InMemoryEngineHoursRepository(sessions))
 
     assert service.total_sessions() == 2
+
+
+def test_total_engine_hours_sums_session_durations_in_hours() -> None:
+    sessions = [
+        EngineSession(started_at=10.0, stopped_at=3610.0, duration_seconds=3600.0),
+        EngineSession(started_at=4000.0, stopped_at=5800.0, duration_seconds=1800.0),
+    ]
+    service = EngineHoursService(InMemoryEngineHoursRepository(sessions))
+
+    assert service.total_engine_hours() == 1.5
+
+
+def test_last_session_duration_returns_last_completed_session_duration() -> None:
+    sessions = [
+        EngineSession(started_at=10.0, stopped_at=3610.0, duration_seconds=3600.0),
+        EngineSession(started_at=4000.0, stopped_at=5800.0, duration_seconds=1800.0),
+    ]
+    service = EngineHoursService(InMemoryEngineHoursRepository(sessions))
+
+    assert service.last_session_duration() == 1800.0
+
+
+def test_last_session_duration_returns_zero_when_no_sessions_exist() -> None:
+    service = EngineHoursService(InMemoryEngineHoursRepository([]))
+
+    assert service.last_session_duration() == 0.0

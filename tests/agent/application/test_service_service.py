@@ -22,3 +22,14 @@ def test_is_service_due_uses_service_monitor() -> None:
         total_engine_hours=250.0,
         policy=ServicePolicy(interval_hours=250.0),
     ) is True
+
+
+def test_get_next_service_hour_uses_service_monitor() -> None:
+    service = ServiceService()
+
+    next_service_hour = service.get_next_service_hour(
+        total_engine_hours=251.0,
+        policy=ServicePolicy(interval_hours=250.0),
+    )
+
+    assert next_service_hour == 500.0
