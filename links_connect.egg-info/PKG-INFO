@@ -1,0 +1,12 @@
+Metadata-Version: 2.4
+Name: links-connect
+Version: 0.1.0
+Summary: Industrial telematics platform developed by Links Industries.
+Requires-Python: >=3.13
+License-File: LICENSE
+Requires-Dist: fastapi<1.0.0,>=0.116.0
+Requires-Dist: uvicorn<1.0.0,>=0.30.0
+Provides-Extra: test
+Requires-Dist: httpx<1.0.0,>=0.27.0; extra == "test"
+Requires-Dist: pytest<9.0.0,>=8.0.0; extra == "test"
+Dynamic: license-file

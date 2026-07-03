@@ -3,6 +3,16 @@ name = "links-connect"
 version = "0.1.0"
 description = "Industrial telematics platform developed by Links Industries."
 requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.116.0,<1.0.0",
+    "uvicorn>=0.30.0,<1.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "httpx>=0.27.0,<1.0.0",
+    "pytest>=8.0.0,<9.0.0",
+]
 
 [project.scripts]
 links-agent = "apps.agent.main:main"
