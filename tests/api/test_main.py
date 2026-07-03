@@ -5,9 +5,10 @@ from collections.abc import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
+from apps.agent.application import EngineHoursService
 from apps.agent.engine_hours.models import EngineSession
 from apps.agent.engine_hours.repository import EngineHoursRepository
-from apps.api.dependencies import get_engine_hours_repository
+from apps.api.dependencies import get_engine_hours_service
 from apps.api.main import app
 
 
@@ -31,8 +32,8 @@ def client() -> Iterator[TestClient]:
             duration_seconds=5.5,
         )
     ]
-    repository = InMemoryEngineHoursRepository(sessions)
-    app.dependency_overrides[get_engine_hours_repository] = lambda: repository
+    service = EngineHoursService(InMemoryEngineHoursRepository(sessions))
+    app.dependency_overrides[get_engine_hours_service] = lambda: service
 
     with TestClient(app) as test_client:
         yield test_client
@@ -58,7 +59,7 @@ def test_health_returns_healthy(client: TestClient) -> None:
     assert response.json() == {"status": "healthy"}
 
 
-def test_engine_hours_returns_sessions_from_repository(client: TestClient) -> None:
+def test_engine_hours_returns_sessions_from_service(client: TestClient) -> None:
     response = client.get("/engine-hours")
 
     assert response.status_code == 200

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from apps.agent.application import EngineHoursService, MachineService, ServiceService
 from apps.agent.config import Configuration
 from apps.agent.engine_hours.repository import EngineHoursRepository
 from apps.agent.engine_hours.sqlite_repository import SQLiteEngineHoursRepository
@@ -24,3 +25,15 @@ def get_engine_hours_repository() -> EngineHoursRepository:
 
 def get_machine_repository() -> MachineRepository:
     return SQLiteMachineRepository(get_database())
+
+
+def get_engine_hours_service() -> EngineHoursService:
+    return EngineHoursService(get_engine_hours_repository())
+
+
+def get_machine_service() -> MachineService:
+    return MachineService(get_machine_repository())
+
+
+def get_service_service() -> ServiceService:
+    return ServiceService()

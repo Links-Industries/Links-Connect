@@ -7,9 +7,10 @@ from datetime import UTC, datetime
 import pytest
 from fastapi.testclient import TestClient
 
+from apps.agent.application import MachineService
 from apps.agent.machines.models import Machine
 from apps.agent.machines.repository import MachineRepository
-from apps.api.dependencies import get_machine_repository
+from apps.api.dependencies import get_machine_service
 from apps.api.main import app
 
 
@@ -44,9 +45,14 @@ def machine_repository() -> InMemoryMachineRepository:
     return InMemoryMachineRepository()
 
 
+def fixed_now() -> datetime:
+    return datetime(2026, 7, 3, 12, 0, tzinfo=UTC)
+
+
 @pytest.fixture
 def client(machine_repository: InMemoryMachineRepository) -> Iterator[TestClient]:
-    app.dependency_overrides[get_machine_repository] = lambda: machine_repository
+    service = MachineService(machine_repository, clock=fixed_now)
+    app.dependency_overrides[get_machine_service] = lambda: service
 
     with TestClient(app) as test_client:
         yield test_client
@@ -92,8 +98,8 @@ def test_post_machines_creates_machine(client: TestClient) -> None:
     assert body["serial_number"] == "TORO-001"
     assert body["year"] == 2024
     assert body["location"] == "Links Golf Club"
-    assert "created_at" in body
-    assert "updated_at" in body
+    assert body["created_at"].startswith("2026-07-03T12:00:00")
+    assert body["updated_at"].startswith("2026-07-03T12:00:00")
 
 
 def test_get_machines_returns_all_machines(

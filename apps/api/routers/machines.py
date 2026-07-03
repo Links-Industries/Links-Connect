@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 
+from apps.agent.application import MachineService
 from apps.agent.machines.models import Machine
-from apps.agent.machines.repository import MachineRepository
-from apps.api.dependencies import get_machine_repository
+from apps.api.dependencies import get_machine_service
 
 router = APIRouter(prefix="/machines", tags=["machines"])
 
@@ -55,17 +55,17 @@ def _to_response(machine: Machine) -> MachineResponse:
 
 @router.get("", response_model=list[MachineResponse])
 def list_machines(
-    repository: MachineRepository = Depends(get_machine_repository),
+    service: MachineService = Depends(get_machine_service),
 ) -> list[MachineResponse]:
-    return [_to_response(machine) for machine in repository.list_machines()]
+    return [_to_response(machine) for machine in service.list_machines()]
 
 
 @router.get("/{machine_id}", response_model=MachineResponse)
 def get_machine(
     machine_id: int,
-    repository: MachineRepository = Depends(get_machine_repository),
+    service: MachineService = Depends(get_machine_service),
 ) -> MachineResponse:
-    machine = repository.get_machine(machine_id)
+    machine = service.get_machine(machine_id)
 
     if machine is None:
         raise HTTPException(
@@ -79,19 +79,15 @@ def get_machine(
 @router.post("", response_model=MachineResponse, status_code=status.HTTP_201_CREATED)
 def create_machine(
     request: MachineCreateRequest,
-    repository: MachineRepository = Depends(get_machine_repository),
+    service: MachineService = Depends(get_machine_service),
 ) -> MachineResponse:
-    now = datetime.now(UTC)
-    machine = Machine(
-        id=None,
+    machine = service.create_machine(
         name=request.name,
         manufacturer=request.manufacturer,
         model=request.model,
         serial_number=request.serial_number,
         year=request.year,
         location=request.location,
-        created_at=now,
-        updated_at=now,
     )
 
-    return _to_response(repository.create_machine(machine))
+    return _to_response(machine)
